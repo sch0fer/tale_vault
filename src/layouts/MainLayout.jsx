@@ -19,9 +19,10 @@ function MainLayout(props) {
   const closeMenu = () => setIsActive(false);
   const toggleMenu = () => setIsActive((active) => !active);
 
-  const nav_array = createNavArray("main", {
-    user_id: user()?.id,
-  });
+  const nav_array = () =>
+    createNavArray("main", {
+      user_id: user()?.id,
+    });
 
   return (
     <div class="is-flex is-flex-direction-column is-min-height-100vh bg-dark text-light">
@@ -84,7 +85,7 @@ function MainLayout(props) {
             <div class="navbar-end">
               <div class="navbar-item">
                 <div class="buttons">
-                  <For each={nav_array}>
+                  <For each={nav_array()}>
                     {(nav_item) => <Link>{nav_item}</Link>}
                   </For>
                 </div>

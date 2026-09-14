@@ -202,21 +202,21 @@ export const saveChapter = async (chapter_id, formData) => {
 };
 
 export const loadUserData = async (user_id) => {
-  if (!user_id) return createResponse(false, "User id must be set");
-  const { user_data, user_error } =
-    await supabase.auth.admin.getUserById(user_id);
-  if (user_error) return createResponse(false, user_error.message);
-  const email = user_data.user?.email;
-  const { query_data, query_error } = await supabase
+  if (!user_id) {
+    return createResponse(false, "User id must be set");
+  }
+
+  const { data, error } = await supabase
     .from("profiles")
-    .select()
+    .select("*")
     .eq("id", user_id)
     .single();
-  if (query_error) return createResponse(false, query_error.message);
-  return createResponse(true, "Loading user data completed", {
-    ...query_data,
-    email,
-  });
+
+  if (error) {
+    return createResponse(false, error.message);
+  }
+
+  return createResponse(true, "Loading user data completed", data);
 };
 
 export const categories = ["Fantasy", "Sci-Fi", "Thriller", "Horror", "Love"];
