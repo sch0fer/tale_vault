@@ -5,7 +5,7 @@ import { render } from "solid-js/web";
 import "solid-devtools";
 
 import { Router } from "@solidjs/router";
-import { routes } from "./routes";
+import { routes } from "./utils/routes";
 
 import MainLayout from "./layouts/MainLayout";
 import { AuthProvider } from "./context/AuthContext";

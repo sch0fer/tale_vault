@@ -1,11 +1,11 @@
 import { children, lazy } from "solid-js";
-import AppLayout from "./layouts/AppLayout.jsx";
-import { ProtectedRoute } from "./context/AuthContext.jsx";
+import AppLayout from "../layouts/AppLayout.jsx";
+import { ProtectedRoute } from "../context/AuthContext.jsx";
 
 export const routes = [
   {
     path: "/",
-    component: lazy(() => import("./routes/Home.jsx")),
+    component: lazy(() => import("../routes/Home.jsx")),
     text: "Home",
   },
   {
@@ -13,17 +13,17 @@ export const routes = [
     children: [
       {
         path: "/sign-in",
-        component: lazy(() => import("./routes/Login.jsx")),
+        component: lazy(() => import("../routes/Login.jsx")),
         text: "Sign in",
       },
       {
         path: "/sign-up",
-        component: lazy(() => import("./routes/Register.jsx")),
+        component: lazy(() => import("../routes/Register.jsx")),
         text: "Sign up",
       },
       {
         path: "/logout",
-        component: lazy(() => import("./routes/Logout.jsx")),
+        component: lazy(() => import("../routes/Logout.jsx")),
         text: "Log out",
       },
     ],
@@ -34,12 +34,12 @@ export const routes = [
     children: [
       {
         path: "/:user_id",
-        component: lazy(() => import("./routes/Profile.jsx")),
+        component: lazy(() => import("../routes/Profile.jsx")),
         text: "Profile",
       },
       {
         path: "/:user_id/edit",
-        component: lazy(() => import("./routes/EditProfile.jsx")),
+        component: lazy(() => import("../routes/EditProfile.jsx")),
         text: "Edit",
       },
     ],
@@ -54,27 +54,27 @@ export const routes = [
         children: [
           {
             path: "/explore",
-            component: lazy(() => import("./routes/Explore.jsx")),
+            component: lazy(() => import("../routes/Explore.jsx")),
             text: "Explore",
           },
           {
             path: "/settings",
-            component: lazy(() => import("./routes/Settings.jsx")),
+            component: lazy(() => import("../routes/Settings.jsx")),
             text: "Settings",
           },
           {
             path: "/read/:book_id",
-            component: lazy(() => import("./routes/Read.jsx")),
+            component: lazy(() => import("../routes/Read.jsx")),
             text: "Read",
           },
           {
             path: "/write",
-            component: lazy(() => import("./routes/Write.jsx")),
+            component: lazy(() => import("../routes/Write.jsx")),
             text: "Write",
           },
           {
             path: "/write/:book_id",
-            component: lazy(() => import("./routes/Write.jsx")),
+            component: lazy(() => import("../routes/WriteBook.jsx")),
             text: "Continue writing",
           },
         ],
@@ -83,6 +83,6 @@ export const routes = [
   },
   {
     path: "*404",
-    component: lazy(() => import("./routes/NotFound.jsx")),
+    component: lazy(() => import("../routes/NotFound.jsx")),
   },
 ];
