@@ -15,6 +15,10 @@ function WriteBook() {
           }}
         </For>
       </div>
+      <div>
+        <label>Short summary</label>
+        <textarea></textarea>
+      </div>
     </form>
   );
 }
