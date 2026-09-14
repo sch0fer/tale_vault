@@ -145,7 +145,7 @@ function Register() {
 
             <div class="has-text-centered pt-5 border-top-dark">
               <p class="is-size-7 text-light-ter">
-                Already have an account?{" "}
+                Already have an account?
                 <A
                   href="/auth/sign-in"
                   class="text-purple-accent font-weight-semibold hover-underline ml-1"

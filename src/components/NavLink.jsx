@@ -1,5 +1,4 @@
 import { A } from "@solidjs/router";
-
 function NavLink({ href, icon, onClick = () => {}, children }) {
   return (
     <A
@@ -8,10 +7,9 @@ function NavLink({ href, icon, onClick = () => {}, children }) {
       activeClass="is-purple"
       href={href}
       onClick={onClick}
-      end={true}
+      end
     >
-      <span class="icon">{icon}</span>
-      <span>{children}</span>
+      <span class="icon">{icon}</span> <span>{children}</span>
     </A>
   );
 }

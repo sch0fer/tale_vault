@@ -1,19 +1,17 @@
 import {
-  createSignal,
   createContext,
-  useContext,
-  onMount,
   createEffect,
+  createSignal,
+  onMount,
+  Show,
+  useContext,
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { supabase } from "../utils/supabase";
-
 const AuthContext = createContext();
-
 export function AuthProvider(props) {
   const [user, setUser] = createSignal(null);
   const [loading, setLoading] = createSignal(true);
-
   onMount(async () => {
     const {
       data: { session },
@@ -25,33 +23,29 @@ export function AuthProvider(props) {
         setUser(session?.user ?? null);
       },
     );
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+    return () => authListener.subscription.unsubscribe();
   });
-
   return (
     <AuthContext.Provider value={{ user, loading }}>
       {props.children}
     </AuthContext.Provider>
   );
 }
-
 export const useAuth = () => useContext(AuthContext);
 export function ProtectedRoute(props) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-
   createEffect(() => {
     if (!loading() && !user()) {
       navigate("/auth/sign-in", { replace: true });
     }
   });
-
   return (
     <Show
       when={!loading()}
-      fallback={<div class="has-text-centered py-6">Loading...</div>}
+      fallback={
+        <div class="has-text-centered py-6 text-light-ter"> Loading... </div>
+      }
     >
       <Show when={user()}>{props.children}</Show>
     </Show>

@@ -124,7 +124,7 @@ function Login() {
 
             <div class="has-text-centered pt-5 border-top-dark">
               <p class="is-size-7 text-light-ter">
-                Don't have an account?{" "}
+                Don't have an account?
                 <A
                   href="/auth/sign-up"
                   class="text-purple-accent font-weight-semibold hover-underline ml-1"
