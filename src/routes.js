@@ -1,4 +1,5 @@
 import { createComponent, lazy } from "solid-js";
+import AppLayout from "./layouts/AppLayout.jsx";
 import { ProtectedRoute } from "./context/AuthContext.jsx";
 
 export const routes = [
@@ -21,11 +22,33 @@ export const routes = [
   },
   {
     path: "/app",
-    component: (props) => createComponent(ProtectedRoute, props),
+    component: ProtectedRoute,
     children: [
       {
-        path: "/profile",
-        component: lazy(() => import("./routes/Profile.jsx")),
+        path: "/",
+        component: AppLayout,
+        children: [
+          {
+            path: "/profile",
+            component: lazy(() => import("./routes/Profile.jsx")),
+          },
+          {
+            path: "/explore",
+            component: lazy(() => import("./routes/Explore.jsx")),
+          },
+          {
+            path: "/read/:book_id",
+            component: lazy(() => import("./routes/Read.jsx")),
+          },
+          {
+            path: "/write",
+            component: lazy(() => import("./routes/Write.jsx")),
+          },
+          {
+            path: "/write/:book_id",
+            component: lazy(() => import("./routes/Write.jsx")),
+          },
+        ],
       },
     ],
   },

@@ -4,6 +4,7 @@ function Stat({ value, title }) {
       <h2 class="title is-1 text-purple-accent font-weight-bold mb-1">
         {value}
       </h2>
+
       <p class="is-size-6 text-light-ter">{title}</p>
     </div>
   );

@@ -1,6 +1,5 @@
-import { createSignal } from "solid-js";
-import { A } from "@solidjs/router";
-import { useNavigate } from "@solidjs/router";
+import { createSignal, Show } from "solid-js";
+import { A, useNavigate } from "@solidjs/router";
 import {
   Menu,
   House,
@@ -14,6 +13,7 @@ import {
   ShieldCheck,
   FileText,
   User,
+  Search,
 } from "lucide-solid";
 
 import NavLink from "../components/NavLink";
@@ -24,6 +24,7 @@ import { useAuth } from "../context/AuthContext";
 
 function MainLayout(props) {
   const [isActive, setIsActive] = createSignal(false);
+  const [searchQuery, setSearchQuery] = createSignal("");
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -35,6 +36,16 @@ function MainLayout(props) {
     closeMenu();
     await supabase.auth.signOut();
     navigate("/");
+  };
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+
+    const query = searchQuery().trim();
+
+    if (!query) return;
+
+    navigate(`/app/explore?query=${encodeURIComponent(query)}`);
   };
 
   return (
@@ -54,6 +65,7 @@ function MainLayout(props) {
               <span class="icon text-purple mr-2">
                 <BookOpen size={20} />
               </span>
+
               <span>TaleVault</span>
             </A>
 
@@ -68,16 +80,56 @@ function MainLayout(props) {
           </div>
 
           <div class={`navbar-menu ${isActive() ? "is-active" : ""}`}>
+            <Show when={user()}>
+              <div class="navbar-start is-flex-grow-1 is-justify-content-center">
+                <div class="navbar-item search-navbar-item">
+                  <form
+                    class="field has-addons search-navbar-form"
+                    role="search"
+                    onSubmit={handleSearch}
+                  >
+                    <div class="control has-icons-left is-expanded">
+                      <input
+                        class="input bg-dark text-light search-navbar-input"
+                        type="search"
+                        value={searchQuery()}
+                        onInput={(event) =>
+                          setSearchQuery(event.currentTarget.value)
+                        }
+                        placeholder="Search stories..."
+                        aria-label="Search stories"
+                      />
+
+                      <span class="icon is-small is-left">
+                        <Search size={16} />
+                      </span>
+                    </div>
+
+                    <div class="control">
+                      <button
+                        class="button is-purple"
+                        type="submit"
+                        aria-label="Submit search"
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </Show>
+
             <div class="navbar-end">
               <div class="navbar-item">
                 <div class="buttons">
                   <NavLink
                     href="/"
                     onClick={closeMenu}
-                    icon={<House sie={16} />}
+                    icon={<House size={16} />}
                   >
                     Home
                   </NavLink>
+
                   <Show
                     when={user()}
                     fallback={
@@ -89,6 +141,7 @@ function MainLayout(props) {
                         >
                           Sign up
                         </NavLink>
+
                         <NavLink
                           href="/auth/sign-in"
                           onClick={closeMenu}
@@ -103,10 +156,10 @@ function MainLayout(props) {
                       href="/app/profile"
                       onClick={closeMenu}
                       icon={<User size={16} />}
-                      class="is-danger"
                     >
                       Profile
                     </NavLink>
+
                     <NavLink
                       href="/auth/logout"
                       onClick={handleSignOut}
@@ -137,8 +190,10 @@ function MainLayout(props) {
                 <span class="icon text-purple mr-2">
                   <BookOpen size={20} />
                 </span>
+
                 <span>TaleVault</span>
               </A>
+
               <p class="is-size-7 max-w-sm">
                 Free, open source, ethical platform for readers and writers.
               </p>
@@ -148,10 +203,12 @@ function MainLayout(props) {
               <p class="menu-label text-light font-weight-semibold">
                 About & Legal
               </p>
+
               <ul class="menu-list">
                 <FooterLink icon={<ShieldCheck size={16} />} href="#">
                   Privacy Policy
                 </FooterLink>
+
                 <FooterLink icon={<FileText size={16} />} href="#">
                   Terms of Service
                 </FooterLink>
@@ -162,10 +219,12 @@ function MainLayout(props) {
               <p class="menu-label text-light font-weight-semibold">
                 Community
               </p>
+
               <ul class="menu-list">
                 <FooterLink href="#" icon={<MessageSquare size={16} />}>
                   Discord
                 </FooterLink>
+
                 <FooterLink href="#" icon={<Code size={16} />}>
                   GitHub
                 </FooterLink>
