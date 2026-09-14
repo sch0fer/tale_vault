@@ -1,7 +1,8 @@
 import { createSignal } from "solid-js";
 import { A } from "@solidjs/router";
-import { Mail, Lock, UserPlus, CircleAlert } from "lucide-solid";
-import { supabase } from "../utils/supabase";
+import { Mail, Lock, UserPlus } from "lucide-solid";
+import { register } from "../utils/lib";
+import ResponseMessage from "../components/ResponseMessage";
 
 function Register() {
   const [response, setResponse] = createSignal(null);
@@ -10,31 +11,7 @@ function Register() {
     e.preventDefault();
     setResponse(null);
     const formData = new FormData(e.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const repeat_password = formData.get("repeat_password");
-    if (password != repeat_password) {
-      setResponse({
-        success: false,
-        message: "Passwords must be identical!",
-        data: null,
-      });
-      return;
-    }
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      setResponse({
-        success: false,
-        message: error.message,
-        data: null,
-      });
-      return;
-    }
-    setResponse({
-      success: true,
-      message: "Your account has been created!",
-      data: data,
-    });
+    setResponse(await register(formData));
   };
 
   return (
@@ -50,14 +27,7 @@ function Register() {
             </p>
           </div>
 
-          <Show when={response()}>
-            <div
-              class={`notification is-light is-size-7 py-3 px-4 mb-5 is-flex is-align-items-center gap-2 ${response().success ? "is-primary" : "is-danger"}`}
-            >
-              <CircleAlert size={16} />
-              <span>{response().message}</span>
-            </div>
-          </Show>
+          <ResponseMessage response={response} setResponse={setResponse} />
 
           <form onSubmit={handleSubmit}>
             <div class="field mb-5">

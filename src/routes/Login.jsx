@@ -1,7 +1,8 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal } from "solid-js";
 import { A } from "@solidjs/router";
-import { Mail, Lock, LogIn, CircleAlert } from "lucide-solid";
-import { supabase } from "../utils/supabase";
+import { Mail, Lock, LogIn } from "lucide-solid";
+import { login } from "../utils/lib";
+import ResponseMessage from "~/components/ResponseMessage";
 
 function Login() {
   const [response, setResponse] = createSignal(null);
@@ -10,25 +11,7 @@ function Login() {
     e.preventDefault();
     setResponse(null);
     const formData = new FormData(e.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) {
-      setResponse({
-        success: false,
-        message: error.message,
-        data: null,
-      });
-      return;
-    }
-    setResponse({
-      success: true,
-      message: "Signed in successfully!",
-      data: data,
-    });
+    setResponse(await login(formData));
   };
 
   return (
@@ -43,14 +26,7 @@ function Login() {
               Sign in to continue to TaleVault
             </p>
           </div>
-          <Show when={response()}>
-            <div
-              class={`notification is-light is-size-7 py-3 px-4 mb-5 is-flex is-align-items-center gap-2 ${response().success ? "is-primary" : "is-danger"}`}
-            >
-              <CircleAlert size={16} />
-              <span>{response().message}</span>
-            </div>
-          </Show>
+          <ResponseMessage response={response} setResponse={setResponse} />
 
           <form onSubmit={handleSubmit}>
             <div class="field mb-5">

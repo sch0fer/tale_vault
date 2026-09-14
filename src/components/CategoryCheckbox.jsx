@@ -1,4 +1,4 @@
-function CategoryCheckbox({ children, categories }) {
+function CategoryCheckbox({ children, categories = [] }) {
   const slug = children.toLowerCase();
   return (
     <label class="checkbox text-light-ter mb-3">

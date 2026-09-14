@@ -7,7 +7,7 @@ import {
   useContext,
 } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { supabase } from "../utils/supabase";
+import { supabase } from "../utils/lib";
 const AuthContext = createContext();
 export function AuthProvider(props) {
   const [user, setUser] = createSignal(null);

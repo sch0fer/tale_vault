@@ -15,7 +15,9 @@ function AppLayout({ children }) {
         <A href={`/profile/${user()?.id}/edit`} activeClass="is-active" end>
           Edit profile
         </A>
-        <A href="/app/settings">Settings</A>
+        <A href="/app/settings" activeClass="is-active" end>
+          Settings
+        </A>
       </p>
       <div class="panel-block">
         <div class="container is-fluid">{children}</div>
