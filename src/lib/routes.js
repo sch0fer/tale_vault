@@ -1,4 +1,4 @@
-import { children, lazy } from "solid-js";
+import { lazy } from "solid-js";
 import AppLayout from "../layouts/AppLayout.jsx";
 import { ProtectedRoute } from "../context/AuthContext.jsx";
 import {
@@ -9,14 +9,22 @@ import {
   User,
   UserPen,
   Search,
-  Cog,
   Pen,
 } from "lucide-solid";
+import Home from "../routes/Home.jsx";
+import Profile from "../routes/Profile.jsx";
+import EditProfile from "../routes/EditProfile.jsx";
+import Explore from "../routes/Explore.jsx";
+import Settings from "../routes/Settings.jsx";
+import Read from "../routes/Read.jsx";
+import Write from "../routes/Write.jsx";
+import WriteBook from "../routes/WriteBook.jsx";
+import WriteChapter from "../routes/WriteChapter.jsx";
 
 export const routes = [
   {
     path: "/",
-    component: lazy(() => import("../routes/Home.jsx")),
+    component: Home,
     text: "Home",
     icon: House,
     menu: "main",
@@ -27,7 +35,7 @@ export const routes = [
     children: [
       {
         path: "/:user_id",
-        component: lazy(() => import("../routes/Profile.jsx")),
+        component: Profile,
         text: "Profile",
         icon: User,
         menu: "main",
@@ -35,10 +43,9 @@ export const routes = [
       },
       {
         path: "/:user_id/edit",
-        component: lazy(() => import("../routes/EditProfile.jsx")),
+        component: EditProfile,
         text: "Edit profile",
         icon: UserPen,
-        menu: "app",
       },
     ],
   },
@@ -52,36 +59,36 @@ export const routes = [
         children: [
           {
             path: "/explore",
-            component: lazy(() => import("../routes/Explore.jsx")),
+            component: Explore,
             text: "Explore",
             icon: Search,
             menu: "app",
           },
           {
             path: "/settings",
-            component: lazy(() => import("../routes/Settings.jsx")),
+            component: Settings,
             text: "Settings",
-            icon: Cog,
+            icon: Settings,
             menu: "app",
           },
           {
             path: "/read/:book_id",
-            component: lazy(() => import("../routes/Read.jsx")),
+            component: Read,
           },
           {
             path: "/write",
-            component: lazy(() => import("../routes/Write.jsx")),
+            component: Write,
             text: "Write",
             icon: Pen,
             menu: "app",
           },
           {
             path: "/write/:book_id",
-            component: lazy(() => import("../routes/WriteBook.jsx")),
+            component: WriteBook,
           },
           {
             path: "/write/:book_id/:chapter_id",
-            component: lazy(() => import("../routes/WriteChapter.jsx")),
+            component: WriteChapter,
           },
         ],
       },

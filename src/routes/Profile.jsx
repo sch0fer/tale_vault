@@ -1,8 +1,9 @@
-import { User, Mail, CalendarDays, BookOpen, PenLine } from "lucide-solid";
+import { CalendarDays, BookOpen, PenLine, UserPen } from "lucide-solid";
 import { useAuth } from "../context/AuthContext";
 import { loadUserData } from "../lib/supabase";
 import { useParams } from "@solidjs/router";
 import { createEffect, createSignal, Show } from "solid-js";
+import Link from "../components/Link";
 
 function Profile() {
   const { user } = useAuth();
@@ -48,21 +49,36 @@ function Profile() {
                     <div class="columns is-vcentered is-variable is-6">
                       <div class="column is-narrow">
                         <div class="profile-avatar" aria-hidden="true">
-                          <User size={48} />
+                          <img
+                            src={
+                              profile().avatar_url ||
+                              `https://placehold.co/100x100?text=${profile().display_name.substring(0, 1)}`
+                            }
+                            alt={`${profile().display_name}'s avatar`}
+                          />
                         </div>
                       </div>
 
                       <div class="column">
                         <p class="is-size-7 text-purple has-text-weight-semibold mb-2">
                           PROFILE
+                          <Show when={user_id == user()?.id}>
+                            <Link>
+                              {{
+                                text: "Edit profile",
+                                icon: UserPen,
+                                link: `/profile/${user()?.id}/edit`,
+                              }}
+                            </Link>
+                          </Show>
                         </p>
 
                         <h1 class="title is-2 text-light mb-2">
-                          {profile().display_name}
+                          @{profile().display_name}
                         </h1>
 
                         <p class="text-light-ter">
-                          Your TaleVault reader and writer profile.
+                          {profile().bio || "Bio..."}
                         </p>
                       </div>
                     </div>
@@ -72,10 +88,7 @@ function Profile() {
                     <div class="columns is-multiline">
                       <div class="column is-6">
                         <div class="profile-info-item">
-                          <img
-                            src={profile().avatar_url}
-                            alt={`${profile().display_name}'s avatar`}
-                          />
+                          
                         </div>
                       </div>
 

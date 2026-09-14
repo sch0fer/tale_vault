@@ -21,6 +21,7 @@ export const createNavArray = (menu = "main", vars = {}) => {
           text: route.text,
           link: resolve_path(path),
           icon: route.icon,
+          when: route.when,
         });
       }
 

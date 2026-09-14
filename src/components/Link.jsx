@@ -26,7 +26,7 @@ function Link({ children }) {
         onClick={children.onClick}
         end
       >
-        <span class="icon">{children.icon}</span> <span>{children.text}</span>
+        <span class="icon"><children.icon/></span> <span>{children.text}</span>
       </A>
     </Show>
   );

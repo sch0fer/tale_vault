@@ -13,7 +13,7 @@ function Login() {
     setResponse(null);
     const formData = new FormData(e.currentTarget);
     setResponse(await login(formData));
-    if (response()?.status) navigate(`/profile/${response()?.data.id}`);
+    if (await response()?.status) navigate(`/profile/${response()?.data.id}`);
   };
 
   return (
