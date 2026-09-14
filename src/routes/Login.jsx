@@ -1,17 +1,19 @@
 import { createSignal } from "solid-js";
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { Mail, Lock, LogIn } from "lucide-solid";
-import { login } from "../utils/lib";
+import { login } from "../lib/supabase";
 import ResponseMessage from "../components/ResponseMessage";
 
 function Login() {
   const [response, setResponse] = createSignal(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setResponse(null);
     const formData = new FormData(e.currentTarget);
     setResponse(await login(formData));
+    if (response()?.status) navigate(`/profile/${response()?.data.id}`);
   };
 
   return (

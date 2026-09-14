@@ -1,6 +1,6 @@
 import { For, Show, createSignal, createEffect } from "solid-js";
 import { useNavigate, useParams } from "@solidjs/router";
-import { categories, loadBook, saveChanges, addChapter } from "../utils/lib";
+import { categories, loadBook, saveChanges, addChapter } from "../lib/supabase";
 import CategoryCheckbox from "../components/CategoryCheckbox";
 import Chapter from "../components/Chapter";
 import ResponseMessage from "../components/ResponseMessage";

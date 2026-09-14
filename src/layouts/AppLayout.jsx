@@ -1,6 +1,6 @@
 import Link from "../components/Link";
 import { useAuth } from "../context/AuthContext";
-import { createNavArray } from "../utils/lib";
+import { createNavArray } from "../lib/navigation";
 import { For } from "solid-js";
 function AppLayout({ children }) {
   const { user } = useAuth();

@@ -10,7 +10,7 @@ import {
   FileText,
   Search,
 } from "lucide-solid";
-import { createNavArray } from "../utils/lib";
+import { createNavArray } from "../lib/navigation";
 import Link from "../components/Link";
 import { useAuth } from "../context/AuthContext";
 function MainLayout(props) {
@@ -19,7 +19,9 @@ function MainLayout(props) {
   const closeMenu = () => setIsActive(false);
   const toggleMenu = () => setIsActive((active) => !active);
 
-  const nav_array = createNavArray("main");
+  const nav_array = createNavArray("main", {
+    user_id: user()?.id,
+  });
 
   return (
     <div class="is-flex is-flex-direction-column is-min-height-100vh bg-dark text-light">

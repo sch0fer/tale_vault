@@ -1,14 +1,14 @@
 import { User, Mail, CalendarDays, BookOpen, PenLine } from "lucide-solid";
 import { useAuth } from "../context/AuthContext";
+import { loadUserData } from "../lib/supabase";
 import { useParams } from "@solidjs/router";
+import { createSignal } from "solid-js";
 function Profile() {
   const { user } = useAuth();
   const { user_id } = useParams();
+  const [profile_data, setProfileData] = createSignal(loadUserData(user_id));
   const isCurrentUser = user()?.id === user_id;
-  const username =
-    user()?.user_metadata?.username ||
-    user()?.email?.split("@")[0] ||
-    "TaleVault user";
+
   return (
     <section class="section px-0">
       <div class="columns is-centered">
@@ -35,13 +35,14 @@ function Profile() {
               <div class="columns is-multiline">
                 <div class="column is-6">
                   <div class="profile-info-item">
-                    <span class="icon text-purple">
-                      <Mail size={18} />
-                    </span>
+                    <img
+                      src={profile_data().avatar_url}
+                      alt={`${profile_data().display_name}'s avatar`}
+                    />
                     <div>
                       <p class="is-size-7 text-light-ter mb-1">Email</p>
                       <p class="text-light">
-                        {user()?.email || "Not available"}
+                        {profile_data().email || "Not available"}
                       </p>
                     </div>
                   </div>
@@ -54,8 +55,10 @@ function Profile() {
                     <div>
                       <p class="is-size-7 text-light-ter mb-1">Member since</p>
                       <p class="text-light">
-                        {user()?.created_at
-                          ? new Date(user().created_at).toLocaleDateString()
+                        {profile_data().created_at
+                          ? new Date(
+                              profile_data().created_at,
+                            ).toLocaleDateString()
                           : "Not available"}
                       </p>
                     </div>

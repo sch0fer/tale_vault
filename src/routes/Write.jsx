@@ -1,6 +1,6 @@
 import { createSignal, createEffect, For } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { loadUserBooks, addBook } from "../utils/lib";
+import { loadUserBooks, addBook } from "../lib/supabase";
 import { useAuth } from "../context/AuthContext";
 
 import ResponseMessage from "../components/ResponseMessage";

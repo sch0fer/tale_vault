@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import { A } from "@solidjs/router";
 import { Mail, Lock, UserPlus } from "lucide-solid";
-import { register } from "../utils/lib";
+import { register } from "../lib/supabase";
 import ResponseMessage from "../components/ResponseMessage";
 
 function Register() {

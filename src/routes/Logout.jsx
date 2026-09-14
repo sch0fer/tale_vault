@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { logout } from "../utils/lib";
+import { logout } from "../lib/supabase";
 
 function Logout() {
   const navigate = useNavigate();

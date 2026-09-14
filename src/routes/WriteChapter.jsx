@@ -1,6 +1,6 @@
 import { Show, createSignal, createEffect } from "solid-js";
 import { useNavigate, useParams } from "@solidjs/router";
-import { loadBook, saveChapter } from "../utils/lib";
+import { loadBook, saveChapter } from "../lib/supabase";
 import ResponseMessage from "../components/ResponseMessage";
 
 function WriteChapter() {

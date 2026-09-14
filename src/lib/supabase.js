@@ -10,36 +10,6 @@ const createResponse = (success, message, data = null) => {
   return { success, message, data };
 };
 
-export const createNavArray = (menu = "main", params = {}) => {
-  const resolvePath = (path) => {
-    return path.replace(/:([a-zA-Z0-9_]+)/g, (_, key) => {
-      return params[key] ?? `:${key}`;
-    });
-  };
-  const navArray = [];
-  const walkRoutes = (routes, parentPath = "") => {
-    routes.forEach((route) => {
-      const path =
-        route.path === "/"
-          ? parentPath
-          : `${parentPath}/${route.path}`.replace(/\/+/g, "/");
-
-      if (route.menu === menu) {
-        navArray.push({
-          text: route.text,
-          link: resolvePath(path),
-          icon: route.icon,
-          when: route.when,
-        });
-      }
-      if (route.children) {
-        walkRoutes(route.children, path);
-      }
-    });
-  };
-  walkRoutes(routes);
-  return navArray;
-};
 export const login = async (formData) => {
   const email = formData.get("email");
   const password = formData.get("password");
@@ -229,6 +199,24 @@ export const saveChapter = async (chapter_id, formData) => {
   }
 
   return createResponse(true, "Chapter saved successfully.", data);
+};
+
+export const loadUserData = async (user_id) => {
+  if (!user_id) return createResponse(false, "User id must be set");
+  const { user_data, user_error } =
+    await supabase.auth.admin.getUserById(user_id);
+  if (user_error) return createResponse(false, user_error.message);
+  const email = user_data.user?.email;
+  const { query_data, query_error } = await supabase
+    .from("profiles")
+    .select()
+    .eq("id", user_id)
+    .single();
+  if (query_error) return createResponse(false, query_error.message);
+  return createResponse(true, "Loading user data completed", {
+    ...query_data,
+    email,
+  });
 };
 
 export const categories = ["Fantasy", "Sci-Fi", "Thriller", "Horror", "Love"];
