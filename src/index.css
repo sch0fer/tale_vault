@@ -1,0 +1,119 @@
+.hero-cta-box {
+  background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.button.is-purple {
+  background-color: #9333ea;
+  color: #ffffff;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.button.is-purple:hover {
+  background-color: #a855f7;
+  color: #ffffff;
+}
+
+.feature-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 2.5rem 2rem 4.5rem 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-purple-dark {
+  background-color: #2e1065;
+  border: 1px solid rgba(147, 51, 234, 0.3);
+}
+
+.feature-zinc-dark {
+  background-color: #18181b;
+  border: 1px solid rgba(39, 39, 42, 0.8);
+}
+
+.feature-icon-box {
+  width: 56px;
+  height: 56px;
+  background-color: rgba(147, 51, 234, 0.2);
+  color: #c084fc;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.wave-decoration {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  line-height: 0;
+}
+
+.wave-decoration svg {
+  width: 100%;
+  height: 40px;
+  fill: #09090b;
+}
+
+.text-purple-accent {
+  color: #c084fc;
+}
+
+.border-top-purple {
+  border-top: 4px solid #9333ea !important;
+}
+
+.border-dark {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.input.bg-dark {
+  background-color: #18181b !important;
+  color: #f4f4f5 !important;
+}
+
+.input.bg-dark::placeholder {
+  color: #71717a;
+}
+
+.input.bg-dark:focus {
+  border-color: #9333ea !important;
+  box-shadow: 0 0 0 0.125em rgba(147, 51, 234, 0.25) !important;
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+@media screen and (max-width: 1023px) {
+  .navbar-menu.is-active .navbar-end,
+  .navbar-menu.is-active .navbar-item,
+  .navbar-menu.is-active .buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .navbar-menu.is-active .buttons .button {
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .navbar-menu.is-active .buttons .button:last-child {
+    margin-bottom: 0 !important;
+  }
+}
