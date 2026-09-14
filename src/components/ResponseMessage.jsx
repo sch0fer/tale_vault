@@ -1,7 +1,10 @@
-import { Show } from "solid-js";
+import { Show, createEffect } from "solid-js";
 import { CircleAlert } from "lucide-solid";
 
 function ResponseMessage({ response, setResponse }) {
+  createEffect(() => {
+    setTimeout(() => setResponse(null), 10000);
+  });
   return (
     <Show when={response()}>
       <div

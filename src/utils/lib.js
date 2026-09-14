@@ -1,16 +1,15 @@
 import { createClient } from "@supabase/supabase-js";
 import { routes } from "./routes";
-import { useNavigate } from "@solidjs/router";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
 const createResponse = (success, message, data = null) => {
   return { success, message, data };
 };
-export const navigate = useNavigate();
+
 export const createNavArray = (menu = "main", params = {}) => {
   const resolvePath = (path) => {
     return path.replace(/:([a-zA-Z0-9_]+)/g, (_, key) => {
@@ -30,6 +29,7 @@ export const createNavArray = (menu = "main", params = {}) => {
           text: route.text,
           link: resolvePath(path),
           icon: route.icon,
+          when: route.when,
         });
       }
       if (route.children) {
@@ -52,8 +52,12 @@ export const login = async (formData) => {
 };
 
 export const logout = async () => {
-  await supabase.auth.signOut();
-  navigate("/");
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    return createResponse(false, error.message);
+  }
+
+  return createResponse(true, "Signed out successfully");
 };
 
 export const register = async (formData) => {
@@ -115,7 +119,7 @@ export const addBook = async (author_id) => {
   const { data, error } = await supabase
     .from("books")
     .insert({
-      author_id: authorId,
+      author_id,
       title: "Untitled book",
       blurp: "",
       cover_url: "https://placehold.co/600x900",
@@ -127,18 +131,104 @@ export const addBook = async (author_id) => {
   if (error) {
     return createResponse(false, error.message);
   }
+
   return createResponse(true, "New book created", data);
 };
 
-export const saveChanges = async (formData) => {
-  const title = formData.get("title");
-  if (!title.trim()) {
-    return createResponse(false, "Title can't be");
+export const saveChanges = async (book_id, formData) => {
+  if (!book_id) {
+    return createResponse(false, "Book ID is required.");
   }
-  const cover = formData.get("cover");
-  if (!(cover instanceof File) || cover.size <= 0) {
-    return createResponse(false, )
+
+  const title = formData.get("title")?.toString().trim();
+  const blurp = formData.get("blurp")?.toString() ?? "";
+
+  if (!title) {
+    return createResponse(false, "Title can't be empty.");
   }
+
+  const { data, error } = await supabase
+    .from("books")
+    .update({
+      title,
+      blurp,
+    })
+    .eq("id", book_id)
+    .select()
+    .single();
+
+  if (error) {
+    return createResponse(false, error.message);
+  }
+
+  return createResponse(true, "Book saved successfully.", data);
+};
+
+export const addChapter = async (book_id) => {
+  if (!book_id) {
+    return createResponse(false, "Book ID is required.");
+  }
+
+  const { data: latest_chapter, error: latest_chapter_error } = await supabase
+    .from("chapters")
+    .select("chapter_number")
+    .eq("book_id", book_id)
+    .order("chapter_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (latest_chapter_error) {
+    return createResponse(false, latest_chapter_error.message);
+  }
+
+  const chapter_number = latest_chapter ? latest_chapter.chapter_number + 1 : 1;
+
+  const { data, error } = await supabase
+    .from("chapters")
+    .insert({
+      book_id,
+      chapter_number,
+      title: `Chapter ${chapter_number}`,
+      content_encrypted: "",
+      published: false,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    return createResponse(false, error.message);
+  }
+
+  return createResponse(true, "New chapter created.", data);
+};
+
+export const saveChapter = async (chapter_id, formData) => {
+  if (!chapter_id) {
+    return createResponse(false, "Chapter ID is required.");
+  }
+
+  const title = formData.get("title")?.toString().trim();
+  const content = formData.get("content")?.toString() ?? "";
+
+  if (!title) {
+    return createResponse(false, "Title can't be empty.");
+  }
+
+  const { data, error } = await supabase
+    .from("chapters")
+    .update({
+      title,
+      content_encrypted: content,
+    })
+    .eq("id", chapter_id)
+    .select()
+    .single();
+
+  if (error) {
+    return createResponse(false, error.message);
+  }
+
+  return createResponse(true, "Chapter saved successfully.", data);
 };
 
 export const categories = ["Fantasy", "Sci-Fi", "Thriller", "Horror", "Love"];

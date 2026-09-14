@@ -2,7 +2,7 @@ import { createSignal } from "solid-js";
 import { A } from "@solidjs/router";
 import { Mail, Lock, LogIn } from "lucide-solid";
 import { login } from "../utils/lib";
-import ResponseMessage from "~/components/ResponseMessage";
+import ResponseMessage from "../components/ResponseMessage";
 
 function Login() {
   const [response, setResponse] = createSignal(null);

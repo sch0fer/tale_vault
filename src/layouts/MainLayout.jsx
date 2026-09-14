@@ -2,27 +2,25 @@ import { createSignal, Show } from "solid-js";
 import { A } from "@solidjs/router";
 import {
   Menu,
-  House,
   BookOpen,
   MessageSquare,
   Code,
   Heart,
-  UserPlus,
-  LogIn,
-  LogOut,
   ShieldCheck,
   FileText,
-  User,
   Search,
 } from "lucide-solid";
-import NavLink from "../components/NavLink";
-import FooterLink from "../components/FooterLink";
+import { createNavArray } from "../utils/lib";
+import Link from "../components/Link";
 import { useAuth } from "../context/AuthContext";
 function MainLayout(props) {
   const [isActive, setIsActive] = createSignal(false);
   const { user } = useAuth();
   const closeMenu = () => setIsActive(false);
   const toggleMenu = () => setIsActive((active) => !active);
+
+  const nav_array = createNavArray("main");
+
   return (
     <div class="is-flex is-flex-direction-column is-min-height-100vh bg-dark text-light">
       <nav
@@ -84,49 +82,9 @@ function MainLayout(props) {
             <div class="navbar-end">
               <div class="navbar-item">
                 <div class="buttons">
-                  <NavLink
-                    href="/"
-                    onClick={closeMenu}
-                    icon={<House size={16} />}
-                  >
-                    Home
-                  </NavLink>
-                  <Show
-                    when={user()}
-                    fallback={
-                      <>
-                        <NavLink
-                          href="/auth/sign-up"
-                          onClick={closeMenu}
-                          icon={<UserPlus size={16} />}
-                        >
-                          Sign up
-                        </NavLink>
-                        <NavLink
-                          href="/auth/sign-in"
-                          onClick={closeMenu}
-                          icon={<LogIn size={16} />}
-                        >
-                          Sign in
-                        </NavLink>
-                      </>
-                    }
-                  >
-                    <NavLink
-                      href={`/profile/${user().id}`}
-                      onClick={closeMenu}
-                      icon={<User size={16} />}
-                    >
-                      Profile
-                    </NavLink>
-                    <NavLink
-                      href="/auth/logout"
-                      onClick={closeMenu}
-                      icon={<LogOut size={16} />}
-                    >
-                      Logout
-                    </NavLink>
-                  </Show>
+                  <For each={nav_array}>
+                    {(nav_item) => <Link>{nav_item}</Link>}
+                  </For>
                 </div>
               </div>
             </div>
@@ -158,12 +116,16 @@ function MainLayout(props) {
                 About & Legal
               </p>
               <ul class="menu-list">
-                <FooterLink icon={<ShieldCheck size={16} />} href="#">
-                  Privacy Policy
-                </FooterLink>
-                <FooterLink icon={<FileText size={16} />} href="#">
-                  Terms of Service
-                </FooterLink>
+                <li>
+                  <Link>
+                    {{ text: "Privacy Policy", link: "#", icon: ShieldCheck }}
+                  </Link>
+                </li>
+                <li>
+                  <Link>
+                    {{ text: "Terms of Service", link: "#", icon: FileText }}
+                  </Link>
+                </li>
               </ul>
             </div>
             <div class="column is-3-tablet">
@@ -171,12 +133,14 @@ function MainLayout(props) {
                 Community
               </p>
               <ul class="menu-list">
-                <FooterLink href="#" icon={<MessageSquare size={16} />}>
-                  Discord
-                </FooterLink>
-                <FooterLink href="#" icon={<Code size={16} />}>
-                  GitHub
-                </FooterLink>
+                <li>
+                  <Link>
+                    {{ text: "Discord", link: "#", icon: MessageSquare }}
+                  </Link>
+                </li>
+                <li>
+                  <Link>{{ text: "GitHub", link: "#", icon: Code }}</Link>
+                </li>
               </ul>
             </div>
           </div>

@@ -1,8 +1,16 @@
+import { useNavigate } from "@solidjs/router";
 import { logout } from "../utils/lib";
-import { createEffect } from "solid-js";
+
 function Logout() {
-  createEffect(() => {
-    logout();
-  });
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    const result = await logout();
+    if (result.success) {
+      navigate("/");
+    }
+  };
+  handleLogout();
+  return null;
 }
+
 export default Logout;
