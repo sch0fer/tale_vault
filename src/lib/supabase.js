@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import { routes } from "./routes";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -60,8 +59,7 @@ export const loadBook = async (book_id) => {
   const { data: bookData, error: bookError } = await supabase
     .from("books")
     .select()
-    .eq("id", book_id)
-    .single();
+    .eq("id", book_id);
 
   if (bookError) {
     return createResponse(false, bookError.message);

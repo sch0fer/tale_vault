@@ -1,4 +1,7 @@
+import { useAuth } from "../context/AuthContext";
+
 function EditProfile() {
+  const { user } = useAuth();
   return (
     <div>
       <form>

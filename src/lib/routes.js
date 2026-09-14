@@ -10,6 +10,7 @@ import {
   UserPen,
   Search,
   Pen,
+  SettingsIcon,
 } from "lucide-solid";
 import Home from "../routes/Home.jsx";
 import Profile from "../routes/Profile.jsx";
@@ -68,7 +69,7 @@ export const routes = [
             path: "/settings",
             component: Settings,
             text: "Settings",
-            icon: Settings,
+            icon: SettingsIcon,
             menu: "app",
           },
           {

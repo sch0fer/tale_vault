@@ -52,6 +52,7 @@ function WriteBook() {
     }
 
     loadBookData();
+    setLoading(false);
   });
 
   const handleSaveChanges = async (e) => {
