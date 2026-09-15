@@ -16,6 +16,7 @@ function WriteBook() {
   const { user } = useAuth();
   const [chapters, setChapters] = createSignal([]);
   const [cover_file, setCoverFile] = createSignal(null);
+  const [cover_url, setCoverUrl] = createSignal(null);
   const [book, setBook] = createSignal(null);
   const [response, setResponse] = createSignal(null);
   const [loading, setLoading] = createSignal(true);
@@ -32,6 +33,7 @@ function WriteBook() {
         message: "Book ID is required.",
         data: null,
       });
+      setLoading(false);
       return;
     }
 
@@ -66,7 +68,21 @@ function WriteBook() {
     }
   };
 
-  onMount(loadBookData);
+  onMount(async () => {
+    await loadBookData();
+
+    const current_book = book();
+
+    if (!current_book?.cover_url) {
+      return;
+    }
+
+    const result = await getBookCoverUrl(current_book.cover_url);
+
+    if (result.success) {
+      setCoverUrl(result.data);
+    }
+  });
 
   const handleSaveChanges = async (e) => {
     e.preventDefault();
@@ -80,12 +96,28 @@ function WriteBook() {
 
     try {
       const form_data = new FormData(e.currentTarget);
-      const result = await saveBook(user()?.id, book_id, form_data, cover_file);
+
+      const result = await saveBook(
+        user()?.id,
+        book_id,
+        form_data,
+        cover_file(),
+      );
 
       setResponse(result);
 
       if (result.success) {
         setBook(result.data);
+
+        if (result.data?.cover_url) {
+          const cover_result = await getBookCoverUrl(result.data.cover_url);
+
+          if (cover_result.success) {
+            setCoverUrl(cover_result.data);
+          }
+        }
+
+        setCoverFile(null);
       }
     } catch (error) {
       setResponse({
@@ -97,6 +129,21 @@ function WriteBook() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleReset = (e) => {
+    e.preventDefault();
+
+    const current_book = book();
+
+    if (!current_book) {
+      return;
+    }
+
+    e.currentTarget.form?.reset();
+
+    setCoverFile(null);
+    setResponse(null);
   };
 
   const handleNewChapter = async () => {
@@ -136,6 +183,7 @@ function WriteBook() {
         fallback={
           <div>
             <ResponseMessage response={response} setResponse={setResponse} />
+
             <p>Unable to load this book.</p>
           </div>
         }
@@ -146,7 +194,7 @@ function WriteBook() {
               {saving() ? "Saving..." : "Save changes"}
             </button>
 
-            <button type="reset" disabled={saving()}>
+            <button type="button" onClick={handleReset} disabled={saving()}>
               Revert changes
             </button>
           </div>
@@ -172,14 +220,14 @@ function WriteBook() {
               name="cover"
               id="cover"
               accept="image/*"
-              onChange={(e) => setCoverFile(e.currentTarget.files[0])}
+              onChange={(e) => {
+                const file = e.currentTarget.files?.[0] ?? null;
+                setCoverFile(file);
+              }}
             />
 
-            <Show when={book()?.cover_url}>
-              <img
-                src={getBookCoverUrl(book().cover_url)}
-                alt="Current book cover"
-              />
+            <Show when={cover_url()}>
+              <img src={cover_url()} alt="Current book cover" />
             </Show>
           </div>
 
@@ -197,7 +245,8 @@ function WriteBook() {
 
           <div>
             <div>
-              Chapters
+              <span>Chapters</span>
+
               <button
                 type="button"
                 onClick={handleNewChapter}
