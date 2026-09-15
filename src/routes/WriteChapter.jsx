@@ -1,6 +1,6 @@
-import { Show, createSignal, createEffect } from "solid-js";
+import { Show, createSignal, onMount } from "solid-js";
 import { useNavigate, useParams } from "@solidjs/router";
-import { loadBook, saveChapter } from "../lib/supabase";
+import { loadChapter, saveChapter } from "../lib/supabase";
 import ResponseMessage from "../components/ResponseMessage";
 
 function WriteChapter() {
@@ -12,49 +12,47 @@ function WriteChapter() {
   const { book_id, chapter_id } = useParams();
   const navigate = useNavigate();
 
-  createEffect(() => {
+  const loadChapterData = async () => {
     if (!book_id || !chapter_id) {
       setResponse({
         success: false,
         message: "Book ID and chapter ID are required.",
         data: null,
       });
+      setChapter(null);
       setLoading(false);
       return;
     }
 
-    const loadChapter = async () => {
-      setLoading(true);
-      setResponse(null);
+    setLoading(true);
+    setResponse(null);
 
-      const result = await loadBook(book_id);
+    try {
+      const result = await loadChapter(book_id, chapter_id);
+
+      setResponse(result);
 
       if (!result.success) {
-        setResponse(result);
-        setLoading(false);
+        setChapter(null);
         return;
       }
 
-      const current_chapter = result.data.chapters.find(
-        (item) => item.id === chapter_id,
-      );
+      setChapter(result.data);
+    } catch (error) {
+      setChapter(null);
 
-      if (!current_chapter) {
-        setResponse({
-          success: false,
-          message: "Chapter not found.",
-          data: null,
-        });
-        setLoading(false);
-        return;
-      }
-
-      setChapter(current_chapter);
+      setResponse({
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Unable to load chapter.",
+        data: null,
+      });
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    loadChapter();
-  });
+  onMount(loadChapterData);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -66,65 +64,74 @@ function WriteChapter() {
     setResponse(null);
     setSaving(true);
 
-    const formData = new FormData(e.currentTarget);
-    const result = await saveChapter(chapter_id, formData);
+    try {
+      const form_data = new FormData(e.currentTarget);
+      const result = await saveChapter(chapter_id, form_data);
 
-    setResponse(result);
+      setResponse(result);
 
-    if (result.success) {
-      setChapter(result.data);
+      if (result.success) {
+        setChapter(result.data);
+      }
+    } catch (error) {
+      setResponse({
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Unable to save chapter.",
+        data: null,
+      });
+    } finally {
+      setSaving(false);
     }
-
-    setSaving(false);
   };
 
-  if (loading()) {
-    return <p>Loading chapter...</p>;
-  }
-
   return (
-    <Show
-      when={chapter()}
-      fallback={
-        <ResponseMessage response={response} setResponse={setResponse} />
-      }
-    >
-      <form onSubmit={handleSave}>
-        <div>
-          <button type="submit" disabled={saving()}>
-            {saving() ? "Saving..." : "Save changes"}
-          </button>
+    <Show when={!loading()} fallback={<p>Loading chapter...</p>}>
+      <Show
+        when={chapter()}
+        fallback={
+          <ResponseMessage response={response} setResponse={setResponse} />
+        }
+      >
+        <form onSubmit={handleSave}>
+          <div>
+            <button type="submit" disabled={saving()}>
+              {saving() ? "Saving..." : "Save changes"}
+            </button>
 
-          <button
-            type="button"
-            onClick={() => navigate(`/app/write/${book_id}`)}
-            disabled={saving()}
-          >
-            Back to book
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={() => navigate(`/app/write/${book_id}`)}
+              disabled={saving()}
+            >
+              Back to book
+            </button>
+          </div>
 
-        <ResponseMessage response={response} setResponse={setResponse} />
+          <ResponseMessage response={response} setResponse={setResponse} />
 
-        <div>
-          <label for="title">Chapter title</label>
-          <input
-            type="text"
-            name="title"
-            id="title"
-            value={chapter()?.title ?? ""}
-          />
-        </div>
+          <div>
+            <label for="title">Chapter title</label>
 
-        <div>
-          <label for="content">Content</label>
-          <textarea
-            name="content"
-            id="content"
-            value={chapter()?.content_encrypted ?? ""}
-          />
-        </div>
-      </form>
+            <input
+              type="text"
+              name="title"
+              id="title"
+              value={chapter()?.title ?? ""}
+            />
+          </div>
+
+          <div>
+            <label for="content">Content</label>
+
+            <textarea
+              name="content"
+              id="content"
+              value={chapter()?.content_encrypted ?? ""}
+            />
+          </div>
+        </form>
+      </Show>
     </Show>
   );
 }

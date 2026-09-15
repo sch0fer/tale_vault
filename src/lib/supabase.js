@@ -56,27 +56,53 @@ export const loadUserBooks = async (author_id) => {
 };
 
 export const loadBook = async (book_id) => {
-  const { data: bookData, error: bookError } = await supabase
-    .from("books")
-    .select()
-    .eq("id", book_id);
-
-  if (bookError) {
-    return createResponse(false, bookError.message);
+  if (!book_id) {
+    return createResponse(false, "Book ID is required.");
   }
-  const { data: chaptersData, error: chaptersError } = await supabase
+
+  const { data: book_data, error: book_error } = await supabase
+    .from("books")
+    .select("*")
+    .eq("id", book_id)
+    .single();
+
+  if (book_error) {
+    return createResponse(false, book_error.message);
+  }
+
+  const { data: chapters_data, error: chapters_error } = await supabase
+    .from("chapters")
+    .select("*")
+    .eq("book_id", book_id)
+    .order("chapter_number", { ascending: true });
+
+  if (chapters_error) {
+    return createResponse(false, chapters_error.message);
+  }
+
+  return createResponse(true, "Successfully loaded book data.", {
+    book: book_data,
+    chapters: chapters_data ?? [],
+  });
+};
+
+export const loadChapter = async (book_id, chapter_id) => {
+  if (!book_id || !chapter_id) {
+    return createResponse(false, "Book ID and chapter ID are required.");
+  }
+
+  const { data, error } = await supabase
     .from("chapters")
     .select()
+    .eq("id", chapter_id)
     .eq("book_id", book_id)
-    .order("chapter_number");
+    .single();
 
-  if (chaptersError) {
-    return createResponse(false, chaptersError.message);
+  if (error) {
+    return createResponse(false, error.message);
   }
-  return createResponse(true, "Successfully loaded book data", {
-    book: bookData,
-    chapters: chaptersData,
-  });
+
+  return createResponse(true, "Chapter loaded successfully.", data);
 };
 
 export const addBook = async (author_id) => {
@@ -103,7 +129,11 @@ export const addBook = async (author_id) => {
   return createResponse(true, "New book created", data);
 };
 
-export const saveChanges = async (book_id, formData) => {
+export const saveBook = async (user_id, book_id, formData, file = null) => {
+  if (!user_id) {
+    return createResponse(false, "User ID is required.");
+  }
+
   if (!book_id) {
     return createResponse(false, "Book ID is required.");
   }
@@ -115,12 +145,30 @@ export const saveChanges = async (book_id, formData) => {
     return createResponse(false, "Title can't be empty.");
   }
 
+  const update_data = {
+    title,
+    blurp,
+  };
+
+  if (file) {
+    const file_path = `users/${user_id}/books/${book_id}/cover/image.png`;
+
+    const { error: upload_error } = await supabase.storage
+      .from("talevault")
+      .upload(file_path, file, {
+        upsert: true,
+      });
+
+    if (upload_error) {
+      return createResponse(false, upload_error.message);
+    }
+
+    update_data.cover_url = file_path;
+  }
+
   const { data, error } = await supabase
     .from("books")
-    .update({
-      title,
-      blurp,
-    })
+    .update(update_data)
     .eq("id", book_id)
     .select()
     .single();
@@ -130,6 +178,26 @@ export const saveChanges = async (book_id, formData) => {
   }
 
   return createResponse(true, "Book saved successfully.", data);
+};
+
+export const getBookCoverUrl = async (cover_url) => {
+  if (!cover_url) {
+    return createResponse(false, "Cover URL is required.");
+  }
+
+  const { data, error } = await supabase.storage
+    .from("talevault")
+    .createSignedUrl(cover_url, 3600);
+
+  if (error) {
+    return createResponse(false, error.message);
+  }
+
+  return createResponse(
+    true,
+    "Cover URL generated successfully.",
+    data.signedUrl,
+  );
 };
 
 export const addChapter = async (book_id) => {
